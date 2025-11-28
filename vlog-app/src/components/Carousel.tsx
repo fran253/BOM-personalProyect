@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import './Carousel.css';
 
 const Carousel = ({ entries }) => {
@@ -7,22 +7,24 @@ const Carousel = ({ entries }) => {
 
   const featuredEntries = entries.slice(0, 5);
 
-  // Auto-play del carrusel
-  useEffect(() => {
-    if (featuredEntries.length > 1) {
-      const interval = setInterval(() => {
-        nextSlide();
-      }, 5000);
-      return () => clearInterval(interval);
-    }
-  }, [currentSlide, featuredEntries.length]);
-
-  const nextSlide = () => {
+  // Función para avanzar al siguiente slide (optimizada con useCallback)
+  const nextSlide = useCallback(() => {
     if (isTransitioning || featuredEntries.length === 0) return;
     setIsTransitioning(true);
     setCurrentSlide((prev) => (prev + 1) % featuredEntries.length);
     setTimeout(() => setIsTransitioning(false), 700);
-  };
+  }, [isTransitioning, featuredEntries.length]);
+
+  // Auto-play del carrusel - CAMBIA CADA 5 SEGUNDOS
+  useEffect(() => {
+    if (featuredEntries.length > 1) {
+      const interval = setInterval(() => {
+        setCurrentSlide((prev) => (prev + 1) % featuredEntries.length);
+      }, 8000); //8 segundos de slide
+      
+      return () => clearInterval(interval);
+    }
+  }, [featuredEntries.length]); // Solo se recrea si cambia el número de entradas
 
   const prevSlide = () => {
     if (isTransitioning || featuredEntries.length === 0) return;

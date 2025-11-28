@@ -32,8 +32,10 @@ const Home = () => {
     { name: 'Amor', image: '../public/images/categories/Amor.jpg', color: '#d66c60ff' },
     { name: 'Miedo', image: '../public/images/categories/Miedo.jpg', color: '#d66c60ff' },
     { name: 'Paz', image: '../public/images/categories/Paz.png', color: '#d66c60ff' },
-    { name: 'Consuelo', image: '../public/images/categories/Consuelo.PNG', color: '#d66c60ff' },
+    { name: 'Tristeza', image: '../public/images/categories/Consuelo.PNG', color: '#d66c60ff' },
     { name: 'Enfado', image: '../public/images/categories/Enfado.png', color: '#d66c60ff' },
+    { name: 'Felicidad', image: '../public/images/categories/Felicidad.png', color: '#d66c60ff' },
+    { name: 'Monstruoso', image: '../public/images/categories/Monstruoso.png', color: '#d66c60ff' },
   ];
 
   return (
