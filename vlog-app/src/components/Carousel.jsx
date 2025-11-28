@@ -71,14 +71,12 @@ const Carousel = ({ entries }) => {
         {/* Contenido */}
         <div className="carousel-content">
           <div className="carousel-text">
-            <span className="carousel-label">Destacado</span>
             <h1 className="carousel-title">{currentEntry.title}</h1>
             <p className="carousel-description">
               {currentEntry.description}
             </p>
             <div className="carousel-actions">
               <button className="btn-primary">Leer más</button>
-              <button className="btn-secondary">Compartir</button>
             </div>
           </div>
         </div>
