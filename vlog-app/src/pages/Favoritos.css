@@ -1,0 +1,266 @@
+.favoritos-page {
+  min-height: 100vh;
+  background-color: var(--primary-bg);
+  padding-top: 100px;
+}
+
+/* Hero Section - Fondo blanco, imagen izquierda, texto derecha */
+.favoritos-hero {
+  padding: 0;
+  background: white;
+  border-bottom: none;
+  position: relative;
+}
+
+/* Línea roja separadora */
+.hero-separator {
+  width: 100%;
+  height: 4px;
+  background: #e74c3c;
+  margin: 0;
+}
+
+.favoritos-hero-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: stretch;
+  min-height: 500px;
+}
+
+/* Izquierda - Imagen al 100% height, 50% width */
+.hero-left-image {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+}
+
+.featured-panel-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Derecha - Textos */
+.hero-right-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.5rem;
+  text-align: center;
+  align-items: center;
+}
+
+
+.hero-quote {
+  font-size: clamp(2rem, 4vw, 2rem);
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  font-family: 'Playfair Display', serif;
+}
+
+.hero-author {
+  font-size: 1.25rem;
+  color: var(--text-secondary);
+  margin: 0;
+  font-weight: 500;
+  font-style: italic;
+}
+
+/* Sección del buscador - Entre hero y galería */
+.search-section {
+  padding: 3rem;
+  background: var(--primary-bg);
+  border-bottom: 1px solid var(--border);
+}
+
+.search-wrapper {
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+/* Gallery Section - Masonry Grid */
+.favoritos-gallery {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 4rem 3rem;
+}
+
+/* Masonry Grid - Similar a Pinterest */
+.masonry-grid {
+  column-count: 4;
+  column-gap: 1.5rem;
+  margin: 0;
+}
+
+/* Items del Masonry */
+.masonry-item {
+  break-inside: avoid;
+  margin-bottom: 1.5rem;
+  cursor: pointer;
+}
+
+/* Card del Favorito */
+.favorito-card {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  background: white;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid var(--border);
+}
+
+.favorito-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.favorito-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.favorito-card:hover .favorito-image {
+  transform: scale(1.05);
+}
+
+/* Overlay con información */
+.favorito-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.7) 60%, transparent 100%);
+  padding: 2.5rem 1.5rem 1.5rem;
+  transform: translateY(10px);
+  opacity: 0;
+  transition: all 0.4s ease;
+}
+
+.favorito-card:hover .favorito-overlay {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.favorito-info {
+  color: white;
+}
+
+.favorito-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+  line-height: 1.3;
+}
+
+.favorito-manga {
+  font-size: 0.875rem;
+  opacity: 0.9;
+  margin: 0 0 1rem 0;
+  font-weight: 500;
+}
+
+/* Likes en el card */
+.favorito-likes {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.like-icon-small {
+  width: 12px;
+  height: 12px;
+  background: #e74c3c;
+  border-radius: 50%;
+}
+
+/* Responsive Design */
+@media (max-width: 1400px) {
+  .masonry-grid {
+    column-count: 3;
+  }
+}
+
+@media (max-width: 1024px) {
+  .favoritos-hero-container {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+
+  .hero-left-image {
+    height: 400px;
+    order: 1;
+  }
+
+  .hero-right-text {
+    order: 2;
+    padding: 3rem 2rem;
+  }
+
+  .search-section {
+    padding: 2rem;
+  }
+
+  .masonry-grid {
+    column-count: 2;
+    column-gap: 1.25rem;
+  }
+
+  .favoritos-gallery {
+    padding: 3rem 2rem;
+  }
+
+  .masonry-item {
+    margin-bottom: 1.25rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .favoritos-page {
+    padding-top: 80px;
+  }
+
+  .hero-left-image {
+    height: 300px;
+  }
+
+  .hero-right-text {
+    padding: 2rem 1.5rem;
+  }
+
+  .hero-quote {
+    font-size: 1.75rem;
+  }
+
+  .hero-author {
+    font-size: 1rem;
+  }
+
+  .search-section {
+    padding: 1.5rem;
+  }
+
+  .masonry-grid {
+    column-count: 1;
+    column-gap: 0;
+  }
+
+  .favoritos-gallery {
+    padding: 2rem 1.5rem;
+  }
+
+  .masonry-item {
+    margin-bottom: 1rem;
+  }
+}

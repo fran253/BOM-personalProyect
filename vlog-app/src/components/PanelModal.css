@@ -1,0 +1,213 @@
+/* Modal para ver panel completo */
+.panel-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.95);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.panel-modal-content {
+  position: relative;
+  max-width: 1200px;
+  width: 100%;
+  animation: scaleIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.modal-close {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.modal-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: rotate(90deg);
+}
+
+.modal-layout {
+  display: flex;
+  gap: 0;
+  background: transparent;
+  border-radius: 24px;
+  overflow: hidden;
+}
+
+.modal-image-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  min-height: 500px;
+  max-height: 80vh;
+  overflow: hidden;
+}
+
+.modal-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 16px 0 0 16px;
+}
+
+.modal-info-container {
+  flex: 0 0 350px;
+  padding: 3rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: transparent;
+  text-align: center;
+}
+
+.modal-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.modal-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0 0 1rem 0;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: white;
+}
+
+.modal-manga {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
+  font-weight: 500;
+}
+
+.like-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 0;
+}
+
+.like-button:hover {
+  transform: scale(1.05);
+}
+
+.like-circle {
+  width: 24px;
+  height: 24px;
+  background: white;
+  border: 3px solid #e74c3c;
+  border-radius: 50%;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.like-button:hover .like-circle {
+  transform: scale(1.15);
+  box-shadow: 0 4px 15px rgba(231, 76, 60, 0.5);
+}
+
+.like-button.liked .like-circle {
+  background: #e74c3c;
+  border: 3px solid #e74c3c;
+  animation: likePopCircle 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes likePopCircle {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.3); }
+  100% { transform: scale(1); }
+}
+
+.like-count {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: white;
+  font-family: 'Comic Sans MS', 'Marker Felt', cursive;
+  letter-spacing: 0.5px;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .modal-layout {
+    flex-direction: column;
+  }
+
+  .modal-image-container {
+    min-height: 400px;
+  }
+
+  .modal-image {
+    border-radius: 16px 16px 0 0;
+  }
+
+  .modal-info-container {
+    flex: 0 0 auto;
+    padding: 2rem;
+  }
+
+  .modal-close {
+    top: 1rem;
+    right: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .panel-modal {
+    padding: 1rem;
+  }
+
+  .modal-title {
+    font-size: 1.5rem;
+  }
+
+  .modal-info-container {
+    padding: 1.5rem;
+  }
+}

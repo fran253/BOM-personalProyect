@@ -12,9 +12,9 @@
 }
 
 .header-container {
-  max-width: 1600px;
-  margin: 0 auto;
-  padding: 1.5rem 3rem;
+  max-width: 100%;
+  margin: 0;
+  padding: 1.5rem 2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -30,25 +30,97 @@
 }
 
 .logo:hover {
-  opacity: 0.7;
+  opacity: 0.9;
 }
 
-.logo h1 {
+.logo-image {
+  height: 3.5rem;
+  width: auto;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+.logo:hover .logo-image {
+  transform: scale(1.05);
+}
+
+/* Contenedor de texto del logo */
+.logo-text-container {
+  position: relative;
+  height: 2rem;
+  min-width: 80px;
+}
+
+.logo-text,
+.logo-text-full {
+  position: absolute;
+  top: 0;
+  left: 0;
   font-size: 1.8rem;
   font-weight: 900;
   letter-spacing: -0.02em;
   margin: 0;
+  white-space: nowrap;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* BOM - fuente normal */
+.logo-text {
+  font-family: 'Playfair Display', serif;
+}
+
+/* Beauty of Manga - fuente Spell of Asia */
+.logo-text-full {
+  font-family: 'Spell of Asia', 'Brush Script MT', 'Lucida Handwriting', cursive;
+  font-size: 1.6rem;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+
+/* Estados de visibilidad */
+.logo-text.visible,
+.logo-text-full.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.logo-text.hidden {
+  opacity: 0;
+  transform: translateY(-10px);
+  pointer-events: none;
+}
+
+.logo-text-full.hidden {
+  opacity: 0;
+  transform: translateY(10px);
+  pointer-events: none;
+}
+
+/* Punto rojo separado a la derecha de BOM */
 .logo-dot {
   font-size: 1.5rem;
   color: #e74c3c;
   animation: pulse 2s ease-in-out infinite;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.logo-dot.hidden {
+  opacity: 0;
+  transform: scale(0);
+}
+
+/* Punto rojo inline que actúa como "o" de "of" */
+.logo-dot-inline {
+  font-size: 1.4rem;
+  color: #e74c3c;
+  display: inline-block;
+  animation: pulse 2s ease-in-out infinite;
+  margin: 0 -0.15rem;
 }
 
 @keyframes pulse {
   0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  50% { opacity: 0.6; }
 }
 
 .nav {
@@ -60,8 +132,8 @@
 .nav-link {
   text-decoration: none;
   color: var(--text-primary);
-  font-weight: 500;
-  font-size: 0.95rem;
+  font-weight: 600;
+  font-size: 1.125rem;
   letter-spacing: -0.01em;
   transition: all 0.3s ease;
   position: relative;
@@ -82,61 +154,26 @@
   width: 100%;
 }
 
-.nav-link-cta {
-  background: var(--accent);
-  color: var(--primary-bg);
-  padding: 0.75rem 1.5rem;
-  border-radius: 100px;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
+/* Responsive */
+@media (max-width: 768px) {
+  .header-container {
+    padding: 1.5rem 1rem;
+  }
 
-.nav-link-cta::after {
-  display: none;
-}
+  .logo-text,
+  .logo-text-full {
+    font-size: 1.4rem;
+  }
 
-.nav-link-cta:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-}
+  .logo-text-full {
+    font-size: 1.2rem;
+  }
 
-.nav-link-cta svg {
-  transition: transform 0.3s ease;
-}
+  .nav {
+    gap: 1.5rem;
+  }
 
-.nav-link-cta:hover svg {
-  transform: rotate(90deg);
-}
-
-.logo {
-  text-decoration: none;
-  color: var(--text-primary);
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  transition: opacity 0.3s ease;
-}
-
-.logo:hover {
-  opacity: 0.7;
-}
-
-.logo-image {
-  height: 3.5rem;  /* Más grande */
-  width: auto;
-  object-fit: contain;
-  transition: transform 0.3s ease;
-}
-
-.logo:hover .logo-image {
-  transform: scale(1.05);
-}
-
-.logo h1 {
-  font-size: 1.8rem;
-  font-weight: 900;
-  letter-spacing: -0.02em;
-  margin: 0;
+  .nav-link {
+    font-size: 0.95rem;
+  }
 }

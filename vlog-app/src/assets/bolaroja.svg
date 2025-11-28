@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" class="katana-circle-svg">
+  <defs>
+    <!-- Definir el filtro para el brillo del corte -->
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="1.5" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <!-- Clip path para la mitad superior -->
+    <clipPath id="topHalf">
+      <rect x="0" y="0" width="20" height="10"/>
+    </clipPath>
+    
+    <!-- Clip path para la mitad inferior -->
+    <clipPath id="bottomHalf">
+      <rect x="0" y="10" width="20" height="10"/>
+    </clipPath>
+  </defs>
+  
+  <!-- Círculo completo como base -->
+  <circle cx="10" cy="10" r="8" fill="#e74c3c" class="circle-base"/>
+  
+  <!-- Mitad superior del círculo -->
+  <circle cx="10" cy="10" r="8" fill="#e74c3c" clip-path="url(#topHalf)" class="circle-top"/>
+  
+  <!-- Mitad inferior del círculo -->
+  <circle cx="10" cy="10" r="8" fill="#e74c3c" clip-path="url(#bottomHalf)" class="circle-bottom"/>
+  
+  <!-- Línea de corte de katana -->
+  <line 
+    x1="0" 
+    y1="10" 
+    x2="20" 
+    y2="10" 
+    stroke="#000" 
+    stroke-width="2" 
+    stroke-linecap="round"
+    class="katana-slash"
+    filter="url(#glow)"
+  />
+</svg>

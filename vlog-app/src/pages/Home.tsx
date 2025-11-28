@@ -28,12 +28,12 @@ const Home = () => {
 
   // Categorías genéricas
   const categories = [
-    { name: 'Amistad', image: '../public/images/categories/Amistad.png', color: '#3498db' },
-    { name: 'Amor', image: '../public/images/categories/Amor.jpg', color: '#e74c3c' },
-    { name: 'Miedo', image: '../public/images/categories/Miedo.jpg', color: '#9b59b6' },
-    { name: 'Paz', image: '../public/images/categories/Paz.png', color: '#f39c12' },
-    { name: 'Consuelo', image: '../public/images/categories/Consuelo.PNG', color: '#2ecc71' },
-    { name: 'Enfado', image: '../public/images/categories/Enfado.png', color: '#e67e22' },
+    { name: 'Amistad', image: '../public/images/categories/Amistad.png', color: '#d66c60ff' },
+    { name: 'Amor', image: '../public/images/categories/Amor.jpg', color: '#d66c60ff' },
+    { name: 'Miedo', image: '../public/images/categories/Miedo.jpg', color: '#d66c60ff' },
+    { name: 'Paz', image: '../public/images/categories/Paz.png', color: '#d66c60ff' },
+    { name: 'Consuelo', image: '../public/images/categories/Consuelo.PNG', color: '#d66c60ff' },
+    { name: 'Enfado', image: '../public/images/categories/Enfado.png', color: '#d66c60ff' },
   ];
 
   return (
