@@ -15,16 +15,16 @@ const Carousel = ({ entries }) => {
     setTimeout(() => setIsTransitioning(false), 700);
   }, [isTransitioning, featuredEntries.length]);
 
-  // Auto-play del carrusel - CAMBIA CADA 5 SEGUNDOS
+  // Auto-play del carrusel - CAMBIA CADA 8 SEGUNDOS
   useEffect(() => {
     if (featuredEntries.length > 1) {
       const interval = setInterval(() => {
         setCurrentSlide((prev) => (prev + 1) % featuredEntries.length);
-      }, 8000); //8 segundos de slide
+      }, 8000);
       
       return () => clearInterval(interval);
     }
-  }, [featuredEntries.length]); // Solo se recrea si cambia el número de entradas
+  }, [featuredEntries.length]);
 
   const prevSlide = () => {
     if (isTransitioning || featuredEntries.length === 0) return;

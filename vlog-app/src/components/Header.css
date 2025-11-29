@@ -177,3 +177,59 @@
     font-size: 0.95rem;
   }
 }
+/* Menú de usuario */
+.user-menu {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.user-info {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.admin-badge {
+  background: #e74c3c;
+  color: white;
+  padding: 0.2rem 0.6rem;
+  border-radius: 100px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.btn-login,
+.btn-logout {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-family: inherit;
+}
+
+.btn-login:hover,
+.btn-logout:hover {
+  opacity: 0.7;
+}
+
+/* Responsive para user menu */
+@media (max-width: 768px) {
+  .user-menu {
+    gap: 0.5rem;
+  }
+
+  .user-info {
+    font-size: 0.85rem;
+  }
+
+  .admin-badge {
+    font-size: 0.65rem;
+    padding: 0.15rem 0.5rem;
+  }
+}

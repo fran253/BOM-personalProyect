@@ -1,71 +1,90 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { getEntries, deleteEntry } from '../utils/storage';
+import { supabase } from '../lib/supabase';
+import type { Categoria } from '../lib/supabase';
+import { getEntries } from '../utils/storage';
 import { initializeMockData } from '../utils/mockData';
 import Carousel from '../components/Carousel';
 import Footer from '../components/Footer';
 import './Home.css';
 
 const Home = () => {
+  const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [entries, setEntries] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Inicializar datos mock para el carousel
     initializeMockData();
-    loadEntries();
+    const mockEntries = getEntries();
+    setEntries(mockEntries);
+
+    // Cargar categorías desde Supabase
+    cargarCategorias();
   }, []);
 
-  const loadEntries = () => {
-    const allEntries = getEntries();
-    setEntries(allEntries);
-  };
+  const cargarCategorias = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('categorias')
+        .select('*')
+        .order('orden_visualizacion', { ascending: true });
 
-  const handleDelete = (id) => {
-    if (window.confirm('¿Estás seguro de eliminar esta entrada?')) {
-      deleteEntry(id);
-      loadEntries();
+      if (error) throw error;
+      setCategorias(data || []);
+    } catch (error) {
+      console.error('Error cargando categorías:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Categorías genéricas
-  const categories = [
-    { name: 'Amistad', image: '../public/images/categories/Amistad.png', color: '#d66c60ff' },
-    { name: 'Amor', image: '../public/images/categories/Amor.jpg', color: '#d66c60ff' },
-    { name: 'Miedo', image: '../public/images/categories/Miedo.jpg', color: '#d66c60ff' },
-    { name: 'Paz', image: '../public/images/categories/Paz.png', color: '#d66c60ff' },
-    { name: 'Tristeza', image: '../public/images/categories/Consuelo.PNG', color: '#d66c60ff' },
-    { name: 'Enfado', image: '../public/images/categories/Enfado.png', color: '#d66c60ff' },
-    { name: 'Felicidad', image: '../public/images/categories/Felicidad.png', color: '#d66c60ff' },
-    { name: 'Monstruoso', image: '../public/images/categories/Monstruoso.png', color: '#d66c60ff' },
-  ];
+  if (loading) {
+    return (
+      <div className="home">
+        <div style={{ 
+          minHeight: '100vh', 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center',
+          fontSize: '1.5rem'
+        }}>
+          Cargando...
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="home">
-      {/* Carrusel Hero */}
+      {/* Carrusel Hero - CON DATOS MOCK */}
       <Carousel entries={entries} />
 
-      {/* Sección de Categorías */}
+      {/* Sección de Categorías - DESDE SUPABASE */}
       <section className="categories-section">
         <div className="section-header">
-          <h2 className="section-title">"Es muy fácil herir a los demás sin darse cuenta, sobre todo cuando eres joven."</h2>
+          <h2 className="section-title">
+            "Es muy fácil herir a los demás sin darse cuenta, sobre todo cuando eres joven."
+          </h2>
           <p className="section-subtitle">Genma Saotome</p>
         </div>
 
         <div className="categories-grid">
-          {categories.map((category, index) => (
+          {categorias.map((categoria) => (
             <div 
-              key={index} 
+              key={categoria.id} 
               className="category-card"
-              style={{ '--accent-color': category.color }}
+              style={{ '--accent-color': categoria.color } as React.CSSProperties}
             >
               <div className="category-image">
-                <img src={category.image} alt={category.name} />
+                <img src={categoria.imagen_url} alt={categoria.nombre} />
                 <div className="category-image-overlay"></div>
               </div>
-              <h3 className="category-name">{category.name}</h3>
+              <h3 className="category-name">{categoria.nombre}</h3>
             </div>
           ))}
         </div>
       </section>
+      
       <Footer />
     </div>
   );
