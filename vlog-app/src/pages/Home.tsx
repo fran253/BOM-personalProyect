@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import type { Categoria } from '../lib/supabase';
 import { getEntries } from '../utils/storage';
@@ -70,8 +71,9 @@ const Home = () => {
 
         <div className="categories-grid">
           {categorias.map((categoria) => (
-            <div 
-              key={categoria.id} 
+            <Link
+              key={categoria.id}
+              to={`/panels?categoria=${categoria.slug}`}
               className="category-card"
               style={{ '--accent-color': categoria.color } as React.CSSProperties}
             >
@@ -80,7 +82,7 @@ const Home = () => {
                 <div className="category-image-overlay"></div>
               </div>
               <h3 className="category-name">{categoria.nombre}</h3>
-            </div>
+            </Link>
           ))}
         </div>
       </section>

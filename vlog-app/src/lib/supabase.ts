@@ -21,16 +21,18 @@ export type PerfilUsuario = {
   actualizado_en: string
 }
 
-export type Categoria = {
-  id: string
-  nombre: string
-  slug: string
-  color: string
-  imagen_url?: string
-  orden_visualizacion: number
-  creado_en: string
+export interface Categoria {
+  id: string;
+  nombre: string;
+  slug: string;
+  color: string;
+  imagen_url: string;
+  imagen_hero: string;     
+  frase: string;            
+  autor_frase: string;     
+  orden_visualizacion: number;
+  creado_en: string;
 }
-
 export type PanelManga = {
   id: string
   titulo: string

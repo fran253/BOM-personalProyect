@@ -1,178 +1,257 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { supabase } from '../lib/supabase';
+import { useAuth } from '../contexts/AuthContext';
+import type { PanelManga, Categoria } from '../lib/supabase';
 import Footer from '../components/Footer';
 import Searchbar from '../components/Buscador';
+import HeroSection from '../components/HeroSection';
 import PanelModal from '../components/PanelModal';
 import './PanelesManga.css';
 
 const Panels = () => {
-  // Datos hardcodeados de paneles con diferentes aspectos
-  const [panels] = useState([
-    {
-      id: 1,
-      image: '/images/Carousel/Car6.jpg',
-      title: 'Berserk - Eclipse',
-      manga: 'Berserk',
-      aspect: 'vertical',
-      likes: 1247
-    },
-    {
-      id: 2,
-      image: '/images/Carousel/Car3.jpg',
-      title: 'Vinland Saga - Batalla',
-      manga: 'Vinland Saga',
-      aspect: 'horizontal',
-      likes: 856
-    },
-    {
-      id: 3,
-      image: '/images/Carousel/Vagabond.png',
-      title: 'Vagabond - Meditación',
-      manga: 'Vagabond',
-      aspect: 'vertical',
-      likes: 2103
-    },
-    {
-      id: 4,
-      image: '/images/Carousel/Car6.jpg',
-      title: 'One Piece - Luffy',
-      manga: 'One Piece',
-      aspect: 'square',
-      likes: 3421
-    },
-    {
-      id: 5,
-      image: '/images/Carousel/Car5.png',
-      title: 'Attack on Titan',
-      manga: 'Attack on Titan',
-      aspect: 'vertical',
-      likes: 1892
-    },
-    {
-      id: 6,
-      image: '/images/Carousel/Car4.jpeg',
-      title: 'Chainsaw Man',
-      manga: 'Chainsaw Man',
-      aspect: 'horizontal',
-      likes: 967
-    },
-    {
-      id: 7,
-      image: '/images/Carousel/Car1.jpeg',
-      title: 'Slam Dunk',
-      manga: 'Slam Dunk',
-      aspect: 'square',
-      likes: 742
-    },
-    {
-      id: 8,
-      image: '/images/categories/Amistad.png',
-      title: 'Tokyo Ghoul',
-      manga: 'Tokyo Ghoul',
-      aspect: 'vertical',
-      likes: 1534
-    },
-    {
-      id: 9,
-      image: '/images/categories/Amor.jpg',
-      title: 'Naruto - Valle del Fin',
-      manga: 'Naruto',
-      aspect: 'horizontal',
-      likes: 2876
-    },
-    {
-      id: 10,
-      image: '/images/categories/Consuelo.PNG',
-      title: 'Death Note',
-      manga: 'Death Note',
-      aspect: 'vertical',
-      likes: 1654
-    },
-    {
-      id: 11,
-      image: '/images/categories/Miedo.jpg',
-      title: 'Hunter x Hunter',
-      manga: 'Hunter x Hunter',
-      aspect: 'square',
-      likes: 1198
-    },
-    {
-      id: 12,
-      image: '/images/categories/Paz.png',
-      title: 'Bleach',
-      manga: 'Bleach',
-      aspect: 'horizontal',
-      likes: 923
-    }
-  ]);
-
+  const [searchParams] = useSearchParams();
+  const categoriaSlug = searchParams.get('categoria');
+  
+  const { user, isAdmin } = useAuth();
+  const [panels, setPanels] = useState<PanelManga[]>([]);
+  const [categoriaActual, setCategoriaActual] = useState<Categoria | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedPanel, setSelectedPanel] = useState(null);
-  const [likedPanels, setLikedPanels] = useState(new Set());
+  const [selectedPanel, setSelectedPanel] = useState<PanelManga | null>(null);
+  const [likedPanels, setLikedPanels] = useState<Set<string>>(new Set());
+  const [loading, setLoading] = useState(true);
 
-  const filteredPanels = panels.filter(panel =>
-    panel.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    panel.manga.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const toggleLike = (panelId) => {
-    setLikedPanels(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(panelId)) {
-        newSet.delete(panelId);
-      } else {
-        newSet.add(panelId);
+  useEffect(() => {
+    const cargarDatos = async () => {
+      try {
+        setLoading(true);
+        
+        if (categoriaSlug) {
+          await cargarCategoriaActual();
+        }
+        
+        await cargarPaneles();
+        
+        if (user) {
+          await cargarLikes();
+        }
+      } catch (error) {
+        console.error('Error cargando datos:', error);
+      } finally {
+        setLoading(false);
       }
-      return newSet;
-    });
+    };
+
+    cargarDatos();
+  }, [categoriaSlug, user]);
+
+  const cargarCategoriaActual = async () => {
+    if (!categoriaSlug) {
+      setCategoriaActual(null);
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from('categorias')
+        .select('*')
+        .eq('slug', categoriaSlug)
+        .single();
+
+      if (error) throw error;
+      setCategoriaActual(data);
+    } catch (error) {
+      console.error('Error cargando categoría:', error);
+      setCategoriaActual(null);
+    }
   };
 
-  return (
+  const cargarPaneles = async () => {
+    try {
+      let query = supabase
+        .from('paneles_manga')
+        .select('*')
+        .eq('estado', 'aprobado')
+        .order('creado_en', { ascending: false });
+
+      if (categoriaSlug) {
+        const { data: categoria } = await supabase
+          .from('categorias')
+          .select('id')
+          .eq('slug', categoriaSlug)
+          .single();
+
+        if (categoria) {
+          query = query.eq('categoria_id', categoria.id);
+        }
+      }
+
+      const { data, error } = await query;
+
+      if (error) throw error;
+      setPanels(data || []);
+    } catch (error) {
+      console.error('Error cargando paneles:', error);
+      setPanels([]);
+    }
+  };
+
+  const cargarLikes = async () => {
+    if (!user) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('favoritos')
+        .select('panel_id')
+        .eq('usuario_id', user.id);
+
+      if (error) throw error;
+      
+      const likedIds = new Set(data?.map(f => f.panel_id) || []);
+      setLikedPanels(likedIds);
+    } catch (error) {
+      console.error('Error cargando likes:', error);
+    }
+  };
+
+  const toggleLike = async (panelId: string) => {
+    if (!user) {
+      alert('Debes iniciar sesión para dar like');
+      return;
+    }
+
+    try {
+      const isLiked = likedPanels.has(panelId);
+
+      if (isLiked) {
+        const { error } = await supabase
+          .from('favoritos')
+          .delete()
+          .eq('usuario_id', user.id)
+          .eq('panel_id', panelId);
+
+        if (error) throw error;
+
+        setLikedPanels(prev => {
+          const newSet = new Set(prev);
+          newSet.delete(panelId);
+          return newSet;
+        });
+      } else {
+        const { error } = await supabase
+          .from('favoritos')
+          .insert({
+            usuario_id: user.id,
+            panel_id: panelId
+          });
+
+        if (error) throw error;
+
+        setLikedPanels(prev => new Set([...prev, panelId]));
+      }
+
+      cargarPaneles();
+    } catch (error) {
+      console.error('Error al dar like:', error);
+      alert('Error al dar like');
+    }
+  };
+
+  const handleAddPanel = () => {
+    // TODO: Abrir modal de subida (lo haremos mañana)
+    console.log('Abrir modal de subida de panel');
+  };
+
+  const filteredPanels = panels.filter(panel =>
+    panel.titulo.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  if (loading) {
+    return (
+      <div className="panels-page">
+        <div style={{ 
+          minHeight: '100vh', 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center',
+          fontSize: '1.5rem'
+        }}>
+          Cargando...
+        </div>
+      </div>
+    );
+  }
+
+    return (
     <div className="panels-page">
-      {/* Hero Section */}
-      <section className="panels-hero">
-        <div className="panels-hero-content">
-          <h1 className="panels-hero-title">Galería de Paneles</h1>
-          <p className="panels-hero-subtitle">
-            Explora los momentos más icónicos del manga
-          </p>
-          
-          {/* Buscador - Componente reutilizable */}
+      <HeroSection
+        imagen={categoriaActual?.imagen_hero || "/images/hero/panels-hero.png"}
+        titulo={categoriaActual?.frase || '"Deberías disfrutar al máximo de los pequeños desvíos. Porque ahí es donde encontrarás cosas más importantes que lo que quieres"'}
+        subtitulo={categoriaActual?.autor_frase || 'Ging Freecss'}
+        altText={categoriaActual ? `Hero de ${categoriaActual.nombre}` : "Manga illustration"}
+      />
+
+      {/* Buscador */}
+      <section className="search-section">
+        <div className="search-wrapper">
           <Searchbar 
             searchTerm={searchTerm}
             setSearchTerm={setSearchTerm}
-            placeholder="Buscar por título o manga..."
+            placeholder="Buscar paneles..."
           />
         </div>
       </section>
 
+      {/* Botón flotante fijo - Solo admins */}
+      {isAdmin && (
+        <button 
+          className="btn-add-panel-fixed"
+          onClick={handleAddPanel}
+        >
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M10 4V16M4 10H16" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+          </svg>
+          <span>Añadir Panel</span>
+        </button>
+      )}
+
       {/* Masonry Grid */}
       <section className="panels-gallery">
-        <div className="masonry-grid">
-          {filteredPanels.map((panel) => (
-            <div 
-              key={panel.id} 
-              className={`masonry-item masonry-item-${panel.aspect}`}
-              onClick={() => setSelectedPanel(panel)}
-            >
-              <div className="panel-card">
-                <img 
-                  src={panel.image} 
-                  alt={panel.title}
-                  className="panel-image"
-                />
-                <div className="panel-overlay">
-                  <div className="panel-info">
-                    <h3 className="panel-title">{panel.title}</h3>
-                    <p className="panel-manga">{panel.manga}</p>
+        {filteredPanels.length === 0 ? (
+          <div className="no-results">
+            <p>No se encontraron paneles</p>
+          </div>
+        ) : (
+          <div className="masonry-grid">
+            {filteredPanels.map((panel) => (
+              <div 
+                key={panel.id} 
+                className="masonry-item"
+                onClick={() => setSelectedPanel(panel)}
+              >
+                <div className="panel-card">
+                  <img 
+                    src={panel.imagen_url} 
+                    alt={panel.titulo}
+                    className="panel-image"
+                  />
+                  <div className="panel-overlay">
+                    <div className="panel-info">
+                      <h3 className="panel-title">{panel.titulo}</h3>
+                      <div className="panel-stats">
+                        <span className="panel-likes">
+                          ❤️ {panel.cantidad_likes}
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </section>
 
-      {/* Modal - Componente reutilizable */}
       {selectedPanel && (
         <PanelModal
           panel={selectedPanel}
