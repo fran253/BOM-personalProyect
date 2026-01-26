@@ -3,21 +3,21 @@ import { useSearchParams } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import type { PanelManga, Categoria } from '../lib/supabase';
-import Footer from '../components/Footer';
-import Searchbar from '../components/Buscador';
-import HeroSection from '../components/HeroSection';
-import PanelModal from '../components/PanelModal';
+import Footer from '../components/Layout/Footer';
+import Searchbar from '../components/ListadoPaneles/Buscador';
+import HeroSection from '../components/ListadoPaneles/HeroSection';
+import PanelModal from '../components/ListadoPaneles/PanelModal';
 import './PanelesManga.css';
 
 const Panels = () => {
   const [searchParams] = useSearchParams();
   const categoriaSlug = searchParams.get('categoria');
   
-  const { user, isAdmin } = useAuth();
+  const { user } = useAuth();
   const [panels, setPanels] = useState<PanelManga[]>([]);
   const [categoriaActual, setCategoriaActual] = useState<Categoria | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedPanel, setSelectedPanel] = useState<PanelManga | null>(null);
+  const [selectedPanel, setSelectedPanel] = useState<any>(null);
   const [likedPanels, setLikedPanels] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
 
@@ -114,27 +114,29 @@ const Panels = () => {
     }
   };
 
-  const toggleLike = async (panelId: string) => {
+  const toggleLike = async (panelId: string | number) => {
     if (!user) {
       alert('Debes iniciar sesión para dar like');
       return;
     }
 
+    const id = typeof panelId === 'number' ? panelId.toString() : panelId;
+
     try {
-      const isLiked = likedPanels.has(panelId);
+      const isLiked = likedPanels.has(id);
 
       if (isLiked) {
         const { error } = await supabase
           .from('favoritos')
           .delete()
           .eq('usuario_id', user.id)
-          .eq('panel_id', panelId);
+          .eq('panel_id', id);
 
         if (error) throw error;
 
         setLikedPanels(prev => {
           const newSet = new Set(prev);
-          newSet.delete(panelId);
+          newSet.delete(id);
           return newSet;
         });
       } else {
@@ -142,12 +144,12 @@ const Panels = () => {
           .from('favoritos')
           .insert({
             usuario_id: user.id,
-            panel_id: panelId
+            panel_id: id
           });
 
         if (error) throw error;
 
-        setLikedPanels(prev => new Set([...prev, panelId]));
+        setLikedPanels(prev => new Set([...prev, id]));
       }
 
       cargarPaneles();
@@ -157,32 +159,31 @@ const Panels = () => {
     }
   };
 
-  const handleAddPanel = () => {
-    // TODO: Abrir modal de subida (lo haremos mañana)
-    console.log('Abrir modal de subida de panel');
-  };
-
   const filteredPanels = panels.filter(panel =>
     panel.titulo.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  // Convertir panel de Supabase a formato del modal
+  const convertToModalPanel = (panel: PanelManga) => ({
+    id: parseInt(panel.id) || 0,
+    image: panel.imagen_url,
+    title: panel.titulo,
+    manga: panel.descripcion || 'Manga',
+    likes: panel.cantidad_likes
+  });
+
   if (loading) {
     return (
       <div className="panels-page">
-        <div style={{ 
-          minHeight: '100vh', 
-          display: 'flex', 
-          alignItems: 'center', 
-          justifyContent: 'center',
-          fontSize: '1.5rem'
-        }}>
-          Cargando...
+        <div className="loading-container">
+          <div className="spinner"></div>
+          <p>Cargando paneles...</p>
         </div>
       </div>
     );
   }
 
-    return (
+  return (
     <div className="panels-page">
       <HeroSection
         imagen={categoriaActual?.imagen_hero || "/images/hero/panels-hero.png"}
@@ -202,24 +203,19 @@ const Panels = () => {
         </div>
       </section>
 
-      {/* Botón flotante fijo - Solo admins */}
-      {isAdmin && (
-        <button 
-          className="btn-add-panel-fixed"
-          onClick={handleAddPanel}
-        >
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-            <path d="M10 4V16M4 10H16" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-          </svg>
-          <span>Añadir Panel</span>
-        </button>
-      )}
-
       {/* Masonry Grid */}
       <section className="panels-gallery">
         {filteredPanels.length === 0 ? (
-          <div className="no-results">
-            <p>No se encontraron paneles</p>
+          <div className="empty-state">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none">
+              <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+            </svg>
+            <h3>No se encontraron paneles</h3>
+            <p>
+              {searchTerm 
+                ? 'Intenta con otros términos de búsqueda'
+                : 'Aún no hay paneles en esta categoría'}
+            </p>
           </div>
         ) : (
           <div className="masonry-grid">
@@ -227,7 +223,7 @@ const Panels = () => {
               <div 
                 key={panel.id} 
                 className="masonry-item"
-                onClick={() => setSelectedPanel(panel)}
+                onClick={() => setSelectedPanel(convertToModalPanel(panel))}
               >
                 <div className="panel-card">
                   <img 
@@ -238,10 +234,12 @@ const Panels = () => {
                   <div className="panel-overlay">
                     <div className="panel-info">
                       <h3 className="panel-title">{panel.titulo}</h3>
-                      <div className="panel-stats">
-                        <span className="panel-likes">
-                          ❤️ {panel.cantidad_likes}
-                        </span>
+                      {panel.descripcion && (
+                        <p className="panel-manga">{panel.descripcion}</p>
+                      )}
+                      <div className="panel-likes">
+                        <div className="like-icon-small"></div>
+                        <span>{panel.cantidad_likes.toLocaleString()}</span>
                       </div>
                     </div>
                   </div>
@@ -252,12 +250,13 @@ const Panels = () => {
         )}
       </section>
 
+      {/* Modal */}
       {selectedPanel && (
         <PanelModal
           panel={selectedPanel}
           onClose={() => setSelectedPanel(null)}
-          likedPanels={likedPanels}
-          onToggleLike={toggleLike}
+          likedPanels={new Set(Array.from(likedPanels).map(id => parseInt(id)))}
+          onToggleLike={(id) => toggleLike(id.toString())}
         />
       )}
 

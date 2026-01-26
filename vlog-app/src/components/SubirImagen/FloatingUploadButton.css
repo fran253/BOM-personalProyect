@@ -1,0 +1,97 @@
+.floating-upload-btn {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 1000;
+  background: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 100px;
+  padding: 1rem 1.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  box-shadow: 0 8px 24px rgba(231, 76, 60, 0.4);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: floatIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes floatIn {
+  from {
+    transform: translateY(100px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.floating-upload-btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(231, 76, 60, 0.5);
+  background: #c0392b;
+}
+
+.floating-upload-btn:active {
+  transform: translateY(-2px);
+}
+
+.floating-upload-btn svg {
+  transition: transform 0.3s ease;
+}
+
+.floating-upload-btn:hover svg {
+  transform: rotate(90deg);
+}
+
+.floating-upload-text {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  letter-spacing: -0.01em;
+}
+
+/* Versión mobile: solo icono */
+@media (max-width: 640px) {
+  .floating-upload-btn {
+    width: 60px;
+    height: 60px;
+    padding: 0;
+    border-radius: 50%;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    justify-content: center;
+  }
+
+  .floating-upload-text {
+    display: none;
+  }
+
+  .floating-upload-btn svg {
+    margin: 0;
+  }
+}
+
+/* Tablet: texto más corto */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .floating-upload-btn {
+    padding: 1rem 1.5rem;
+  }
+}
+
+/* Animación de pulso sutil para llamar la atención */
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 8px 24px rgba(231, 76, 60, 0.4);
+  }
+  50% {
+    box-shadow: 0 8px 24px rgba(231, 76, 60, 0.6);
+  }
+}
+
+.floating-upload-btn {
+  animation: floatIn 0.5s cubic-bezier(0.4, 0, 0.2, 1), 
+             pulse 3s ease-in-out 2s infinite;
+}

@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
-import Login from './Login';
+import { useAuth } from '../../contexts/AuthContext';
+import Login from '../Login';
 import logoImage from '../../public/images/Logo.png';
-import KatanaCircle from './CirculoRojo';
+import KatanaCircle from '../CirculoRojo';
 import './Header.css';
 
 const Header = () => {

@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import Footer from '../components/Footer';
-import Searchbar from '../components/Buscador';
-import PanelModal from '../components/PanelModal';
+import Footer from '../components/Layout/Footer';
+import Searchbar from '../components/ListadoPaneles/Buscador';
+import PanelModal from '../components/ListadoPaneles/PanelModal';
 import './Favoritos.css';
 
 const Favoritos = () => {

@@ -4,8 +4,8 @@ import { supabase } from '../lib/supabase';
 import type { Categoria } from '../lib/supabase';
 import { getEntries } from '../utils/storage';
 import { initializeMockData } from '../utils/mockData';
-import Carousel from '../components/Carousel';
-import Footer from '../components/Footer';
+import Carousel from '../components/Home/Carousel';
+import Footer from '../components/Layout/Footer';
 import './Home.css';
 
 const Home = () => {
